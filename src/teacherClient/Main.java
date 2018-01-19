@@ -47,6 +47,17 @@ public class Main
 	    String pass = PASSWORD;
 	    String[] to = { RECIPIENT };
 	    String subject = "MassPass";
+	    String imageUrl = "http://www.barcodes4.me/barcode/c39/Jan18552.png";
+	    String destinationFile = "image.png";
+
+	    try 
+	    {
+	    	saveImage(imageUrl, destinationFile);
+	    } 
+	    catch (IOException e) 
+	    {
+	    	e.printStackTrace();
+	    }
 	    
 	    sendFromGMail(from, pass, to, subject);
 	}
@@ -64,6 +75,21 @@ public class Main
 	
 	    Session session = Session.getDefaultInstance(props);
 	    MimeMessage message = new MimeMessage(session);
+	    MimeBodyPart imagePart = new MimeBodyPart();
+	    MimeMultipart content = new MimeMultipart();
+	    
+	    try 
+	    {
+	    	imagePart.attachFile("image.png");
+	    } 
+	    catch (IOException e) 
+	    {
+	    	e.printStackTrace();
+	    } 
+	    catch (MessagingException e) 
+	    {
+	    	e.printStackTrace();
+	    }
 	    
 	    try 
 	    {
@@ -82,6 +108,8 @@ public class Main
 	        }
 	
 	        message.setSubject(subject);
+	        content.addBodyPart(imagePart);
+	        message.setContent(content);
 	        
 	        Transport transport = session.getTransport("smtp");
 	        transport.connect(host, from, pass);
