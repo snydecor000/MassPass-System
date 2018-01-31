@@ -145,9 +145,9 @@ public class Emailer
 		{
 			day = "0" + day;
 		}
-		
+		String URL = "http://bwipjs-api.metafloor.com/?bcid=code128&text=" + month + day + "." + p + "." + r + "&scaleX=2&includetext";
 		String imageUrl = "http://www.barcodes4.me/barcode/c39/" + month + day + r + ".png";
-		saveImage(imageUrl, "image.png");
+		saveImage(URL, "image.png");
 	}
 	
 	private void saveImage(String imageUrl, String destinationFile) throws IOException 
