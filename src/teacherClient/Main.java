@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
+import javax.mail.MessagingException;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -38,37 +39,25 @@ import javax.mail.internet.MimeMultipart;*/
 
 public class Main extends Frame implements ActionListener 
 {
-	/*private static String USER_NAME = "cghsmasspass";
+	private static String USER_NAME = "masspasscghs";
 	private static String PASSWORD = "MP#1";
-	private static String RECIPIENT = "";*/
+	private static String RECIPIENT;
 	
 	private JLabel l;
 	private JComboBox monthList;
-	private TextField txt2;
-	private TextField txt;
+	private TextField studentID;
+	private TextField day;
 	private JLabel l2;
 	private JLabel l3;
-	private TextField txt3;
+	private TextField classroom;
 	private JLabel l4;
 	private JButton b;
 	private JButton b2;
 	private JLabel l5;
 	private JLabel l6;
-	private TextField txt4;
-
-	
-	private JButton qb;
-	private JLabel ql;
-	private JLabel ql2;
-	private JLabel ql3;
-	private JLabel ql4;
-	private JButton rb;
-	private JLabel rl;
-	private JLabel rl2;
-	private JLabel rl3;
-	private JLabel rl4;
-	private TextField rtxt;
-	private TextField rtxt2;
+	private TextField emailUsername;
+	private TextField period;
+	private JLabel l7;
 	
 	private String[] months = {"(Month)","January","February","March","April",
 							"May","June","July","August","September",
@@ -101,25 +90,25 @@ public class Main extends Frame implements ActionListener
 		l2 = new JLabel("Day");
 		panel.add(l2);
 		
-		txt = new TextField("0");
-		txt.setPreferredSize(new Dimension(200,21));
-		panel.add(txt);
+		day = new TextField("0");
+		day.setPreferredSize(new Dimension(200,21));
+		panel.add(day);
 		
 		l6 = new JLabel("");
 		l6.setPreferredSize(new Dimension(42,20));
 		panel.add(l6);
 		
-		txt2 = new TextField("");
-		txt2.setPreferredSize(new Dimension(70,21));
-		panel.add(txt2);
+		studentID = new TextField("");
+		studentID.setPreferredSize(new Dimension(70,21));
+		panel.add(studentID);
 		
 		l6 = new JLabel("");
 		l6.setPreferredSize(new Dimension(125,20));
 		panel.add(l6);
 		
-		txt4 = new TextField("snydecor000");
-		txt4.setPreferredSize(new Dimension(30,21));
-		panel.add(txt4);
+		emailUsername = new TextField("");
+		emailUsername.setPreferredSize(new Dimension(100,21));
+		panel.add(emailUsername);
 		
 		l6 = new JLabel("");
 		l6.setPreferredSize(new Dimension(600,20));
@@ -129,16 +118,28 @@ public class Main extends Frame implements ActionListener
 		l4.setPreferredSize(new Dimension(200,20));
 		panel.add(l4);
 		
+		l7 = new JLabel("Period");
+		l7.setPreferredSize(new Dimension(200,20));
+		panel.add(l7);
+		
 		l6 = new JLabel("");
-		l6.setPreferredSize(new Dimension(400,50));
+		l6.setPreferredSize(new Dimension(200,20));
 		panel.add(l6);
 		
-		txt3 = new TextField("");
-		txt3.setPreferredSize(new Dimension(30,21));
-		panel.add(txt3);
+		classroom = new TextField("");
+		classroom.setPreferredSize(new Dimension(50,21));
+		panel.add(classroom);
 		
 		l6 = new JLabel("");
-		l6.setPreferredSize(new Dimension(100,30));
+		l6.setPreferredSize(new Dimension(150,20));
+		panel.add(l6);
+		
+		period = new TextField("");
+		period.setPreferredSize(new Dimension(20,21));
+		panel.add(period);
+		
+		l6 = new JLabel("");
+		l6.setPreferredSize(new Dimension(100,20));
 		panel.add(l6);
 		
 		b = new JButton("Send Pass");
@@ -148,62 +149,6 @@ public class Main extends Frame implements ActionListener
 		b2 = new JButton("Reset");
 		b2.addActionListener(this);
 		panel.add(b2);
-		
-		/*l3 = new JLabel("Pounds: ");
-		panel.add(l3);
-		
-		l4 = new JLabel("");
-		panel.add(l4);
-		
-		b = new JButton("Buddon");
-		b.addActionListener(this);
-		panel.add(b);
-		
-		b2 = new JButton("Exit");
-		b2.addActionListener(this);
-		panel.add(b2);
-		
-		ql = new JLabel("Dollars to Zars");
-		ql.setPreferredSize(new Dimension(200,50));
-		panel.add(ql);
-		
-		ql2 = new JLabel("Dollars: ");
-		panel.add(ql2);
-		
-		qtxt = new TextField("$$$$");
-		qtxt.setPreferredSize(new Dimension(200,50));
-		panel.add(qtxt);
-		
-		ql3 = new JLabel("Zars: ");
-		panel.add(ql3);
-		
-		ql4 = new JLabel("");
-		panel.add(ql4);
-		
-		qb = new JButton("Buddon");
-		qb.addActionListener(this);
-		panel.add(qb);
-		
-		rl = new JLabel("Salary: ");
-		panel.add(rl);
-		
-		rtxt = new TextField("$$$$");
-		rtxt.setPreferredSize(new Dimension(200,50));
-		panel.add(rtxt);
-		
-		rl2 = new JLabel("Games: ");
-		panel.add(rl2);
-		
-		rtxt2 = new TextField("#Games");
-		rtxt2.setPreferredSize(new Dimension(200,50));
-		panel.add(rtxt2);
-		
-		rb = new JButton("Buddon");
-		rb.addActionListener(this);
-		panel.add(rb);
-		
-		rl3 = new JLabel("$ Per Game: ");
-		panel.add(rl3);*/
 		
 		panel.setPreferredSize(new Dimension(625,500));
 		Container cp = frame.getContentPane();
@@ -229,19 +174,32 @@ public class Main extends Frame implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
-		if(e.getSource() == b2)
+		if(e.getSource().equals(b2))
 		{
-			String empty = "";
 			monthList.setSelectedIndex(0);
-			txt.setText("0");
-			txt2.setText(empty);
-			txt4.setText("snydecor000");
-			txt3.setText(empty);
-			//System.exit(0);
-		}
-		if(e.getSource() == b)
-		{
+			day.setText("0");
+			studentID.setText(" ");
+			studentID.setText("");
+			emailUsername.setText(" ");
+			emailUsername.setText("");
+			classroom.setText(" ");
+			classroom.setText("");
 			
+		}
+		if(e.getSource().equals(b))
+		{
+			RECIPIENT = emailUsername.getText() + "@students.centergrove.k12.in.us";
+		    Emailer email = new Emailer(USER_NAME,PASSWORD,RECIPIENT);
+		    try {
+				email.sendBarcodeEmail(monthList.getSelectedIndex(), Integer.parseInt(day.getText()), 
+						Integer.parseInt(period.getText()), classroom.getText());
+			} catch (NumberFormatException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} catch (MessagingException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 }

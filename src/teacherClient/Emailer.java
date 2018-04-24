@@ -18,11 +18,11 @@ import javax.mail.internet.MimeMultipart;
 
 public class Emailer 
 {
-	private String recipients[];
+	private String recipients;
 	private String password;
 	private String username;
 	
-	public Emailer(String from, String pass, String[] to)
+	public Emailer(String from, String pass, String to)
 	{
 	    username = from;
 	    password = pass;
@@ -50,18 +50,11 @@ public class Emailer
 	    
 	    message.setFrom(new InternetAddress(username));
 	    
-        InternetAddress[] toAddress = new InternetAddress[recipients.length];
-
-        for( int x = 0; x < recipients.length; x++ ) 
-        {
-            toAddress[x] = new InternetAddress(recipients[x]);
-        }
-
-        for( int i = 0; i < toAddress.length; i++) 
-        {
-            message.addRecipient(Message.RecipientType.TO, toAddress[i]);
-        }
-
+        InternetAddress toAddress = new InternetAddress();
+        toAddress = new InternetAddress(recipients);
+        message.addRecipient(Message.RecipientType.TO, toAddress);
+        
+        makeBarcode(month,day,period,room);
         message.setSubject("CG Mass Pass");
         content.addBodyPart(createTextBody(month,day,period,room));
         content.addBodyPart(imagePart);
@@ -105,7 +98,7 @@ public class Emailer
 		}
 		
 		MimeBodyPart text = new MimeBodyPart();
-		text.setText("You have been summoned to the " + r + " during period " + p + "/" + p+5 + " on " + month + ", " + d);
+		text.setText("You have been summoned to " + r + " during period " + p + "/" + p+5 + " on " + month + ", " + d);
 		return text;
 	}
 	
@@ -145,9 +138,9 @@ public class Emailer
 		{
 			day = "0" + day;
 		}
-		String URL = "http://bwipjs-api.metafloor.com/?bcid=code128&text=" + month + day + "." + p + "." + r + "&scaleX=2&includetext";
+		//String URL = "http://bwipjs-api.metafloor.com/?bcid=code128&text=" + month + day + "." + p + "." + r + "&scaleX=2&includetext";
 		String imageUrl = "http://www.barcodes4.me/barcode/c39/" + month + day + r + ".png";
-		saveImage(URL, "image.png");
+		saveImage(imageUrl, "image.png");
 	}
 	
 	private void saveImage(String imageUrl, String destinationFile) throws IOException 
@@ -155,6 +148,7 @@ public class Emailer
 	    URL url = new URL(imageUrl);
 	    InputStream is = url.openStream();
 	    OutputStream os = new FileOutputStream(destinationFile);
+	    System.out.println("Ow");
 	
 	    byte[] b = new byte[2048];
 	    int length;
@@ -162,7 +156,7 @@ public class Emailer
 	    while ((length = is.read(b)) != -1) {
 	        os.write(b, 0, length);
 	    }
-	
+	    
 	    is.close();
 	    os.close();
 	}
