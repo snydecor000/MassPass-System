@@ -20,28 +20,21 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.Properties;
 
-/*import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;*/
-
 public class Main extends Frame implements ActionListener 
 {
-	private static String USER_NAME = "masspasscghs";
-	private static String PASSWORD = "MP#1";
-	private static String RECIPIENT;
+	private static String username = "masspasscghs";
+	private static String password = "MassPass#1";
+	private static String recipient;
 	
 	private JLabel l;
 	private JComboBox monthList;
@@ -159,17 +152,28 @@ public class Main extends Frame implements ActionListener
 	
 	public static void main(String[] args) 
 	{
-		Main m = new Main();
-	}
-	/*}
-	    String from = USER_NAME;
-	    String pass = PASSWORD;
-	    String[] to = { RECIPIENT };
+		try 
+		{
+			Scanner in = new Scanner(new File("account"));
+			ArrayList<String> account = new ArrayList<String>();
+			while (in.hasNextLine())
+			{
+				account.add(in.nextLine());
+			}
+			username = account.get(0);
+			password = account.get(1);
+			Main m = new Main();
+		} 
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
 
-	    Emailer e = new Emailer(from,pass,to);
-	    
-	    e.sendBarcodeEmail(month, day, period, room);
-	}*/
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) 
@@ -184,20 +188,29 @@ public class Main extends Frame implements ActionListener
 			emailUsername.setText("");
 			classroom.setText(" ");
 			classroom.setText("");
+			period.setText(" ");
+			period.setText("");
 			
 		}
 		if(e.getSource().equals(b))
 		{
-			RECIPIENT = emailUsername.getText() + "@students.centergrove.k12.in.us";
-		    Emailer email = new Emailer(USER_NAME,PASSWORD,RECIPIENT);
-		    try {
+			recipient = emailUsername.getText() + "@students.centergrove.k12.in.us";
+			Emailer email = new Emailer(username,password,recipient);
+			try
+			{
 				email.sendBarcodeEmail(monthList.getSelectedIndex(), Integer.parseInt(day.getText()), 
 						Integer.parseInt(period.getText()), classroom.getText());
-			} catch (NumberFormatException e1) {
+			} 
+			catch (NumberFormatException e1) 
+			{
 				e1.printStackTrace();
-			} catch (IOException e1) {
+			}
+			catch (IOException e1) 
+			{
 				e1.printStackTrace();
-			} catch (MessagingException e1) {
+			}
+			catch (MessagingException e1) 
+			{
 				e1.printStackTrace();
 			}
 		}
