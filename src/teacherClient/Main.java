@@ -19,6 +19,12 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import org.jdesktop.swingx.JXDatePicker;
+
+import javafx.scene.control.DatePicker;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,8 +38,8 @@ import java.util.Properties;
 
 public class Main extends Frame implements ActionListener 
 {
-	private static String username = "masspasscghs";
-	private static String password = "MassPass#1";
+	private static String username;
+	private static String password;
 	private static String recipient;
 	
 	private JLabel l;
@@ -51,6 +57,7 @@ public class Main extends Frame implements ActionListener
 	private TextField emailUsername;
 	private TextField period;
 	private JLabel l7;
+	private JXDatePicker date;
 	
 	private String[] months = {"(Month)","January","February","March","April",
 							"May","June","July","August","September",
@@ -75,7 +82,7 @@ public class Main extends Frame implements ActionListener
 		l5.setPreferredSize(new Dimension(200,20));
 		panel.add(l5);
 		
-		monthList = new JComboBox(months);
+		/*monthList = new JComboBox(months);
 		monthList.setSelectedIndex(0);
 		monthList.addActionListener(this);
 		panel.add(monthList);
@@ -85,10 +92,14 @@ public class Main extends Frame implements ActionListener
 		
 		day = new TextField("0");
 		day.setPreferredSize(new Dimension(200,21));
-		panel.add(day);
+		panel.add(day);*/
+		
+		date = new JXDatePicker();
+		date.setDate(new Date());
+		panel.add(date);
 		
 		l6 = new JLabel("");
-		l6.setPreferredSize(new Dimension(42,20));
+		l6.setPreferredSize(new Dimension(52,20));
 		panel.add(l6);
 		
 		studentID = new TextField("");
@@ -150,28 +161,18 @@ public class Main extends Frame implements ActionListener
 		frame.setVisible(true);
 	}
 	
-	public static void main(String[] args) 
+	public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, FileNotFoundException 
 	{
-		try 
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		Scanner in = new Scanner(new File("account.txt"));
+		ArrayList<String> account = new ArrayList<String>();
+		while (in.hasNextLine())
 		{
-			Scanner in = new Scanner(new File("account"));
-			ArrayList<String> account = new ArrayList<String>();
-			while (in.hasNextLine())
-			{
-				account.add(in.nextLine());
-			}
-			username = account.get(0);
-			password = account.get(1);
-			Main m = new Main();
-		} 
-		catch (FileNotFoundException e) 
-		{
-			e.printStackTrace();
+			account.add(in.nextLine());
 		}
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
+		username = account.get(0);
+		password = account.get(1);
+		Main m = new Main();
 
 	}
 	
@@ -198,7 +199,7 @@ public class Main extends Frame implements ActionListener
 			Emailer email = new Emailer(username,password,recipient);
 			try
 			{
-				email.sendBarcodeEmail(monthList.getSelectedIndex(), Integer.parseInt(day.getText()), 
+				email.sendBarcodeEmail((date.getDate().getMonth()+1), date.getDate().getDate(), 
 						Integer.parseInt(period.getText()), classroom.getText());
 			} 
 			catch (NumberFormatException e1) 
