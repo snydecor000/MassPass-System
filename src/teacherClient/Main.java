@@ -71,43 +71,27 @@ public class Main extends Frame implements ActionListener
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
 		l = new JLabel("Date of Pass");
-		l.setPreferredSize(new Dimension(200,30));
+		l.setPreferredSize(new Dimension(125,30));
 		panel.add(l);
 		
-		l3 = new JLabel("Student ID #");
-		l3.setPreferredSize(new Dimension(200,30));
-		panel.add(l3);
-		
 		l5 = new JLabel("Student Email Username");
-		l5.setPreferredSize(new Dimension(200,20));
+		l5.setPreferredSize(new Dimension(150,20));
 		panel.add(l5);
 		
-		/*monthList = new JComboBox(months);
-		monthList.setSelectedIndex(0);
-		monthList.addActionListener(this);
-		panel.add(monthList);
+		l4 = new JLabel("Classroom # or Name");
+		l4.setPreferredSize(new Dimension(125,20));
+		panel.add(l4);
 		
-		l2 = new JLabel("Day");
-		panel.add(l2);
-		
-		day = new TextField("0");
-		day.setPreferredSize(new Dimension(200,21));
-		panel.add(day);*/
+		l7 = new JLabel("Period");
+		l7.setPreferredSize(new Dimension(50,20));
+		panel.add(l7);
 		
 		date = new JXDatePicker();
 		date.setDate(new Date());
 		panel.add(date);
 		
 		l6 = new JLabel("");
-		l6.setPreferredSize(new Dimension(52,20));
-		panel.add(l6);
-		
-		studentID = new TextField("");
-		studentID.setPreferredSize(new Dimension(70,21));
-		panel.add(studentID);
-		
-		l6 = new JLabel("");
-		l6.setPreferredSize(new Dimension(125,20));
+		l6.setPreferredSize(new Dimension(25,20));
 		panel.add(l6);
 		
 		emailUsername = new TextField("");
@@ -115,19 +99,7 @@ public class Main extends Frame implements ActionListener
 		panel.add(emailUsername);
 		
 		l6 = new JLabel("");
-		l6.setPreferredSize(new Dimension(600,20));
-		panel.add(l6);
-		
-		l4 = new JLabel("Classroom # or Name");
-		l4.setPreferredSize(new Dimension(200,20));
-		panel.add(l4);
-		
-		l7 = new JLabel("Period");
-		l7.setPreferredSize(new Dimension(200,20));
-		panel.add(l7);
-		
-		l6 = new JLabel("");
-		l6.setPreferredSize(new Dimension(200,20));
+		l6.setPreferredSize(new Dimension(60,20));
 		panel.add(l6);
 		
 		classroom = new TextField("");
@@ -135,16 +107,12 @@ public class Main extends Frame implements ActionListener
 		panel.add(classroom);
 		
 		l6 = new JLabel("");
-		l6.setPreferredSize(new Dimension(150,20));
+		l6.setPreferredSize(new Dimension(50,20));
 		panel.add(l6);
 		
 		period = new TextField("");
 		period.setPreferredSize(new Dimension(20,21));
 		panel.add(period);
-		
-		l6 = new JLabel("");
-		l6.setPreferredSize(new Dimension(100,20));
-		panel.add(l6);
 		
 		b = new JButton("Send Pass");
 		b.addActionListener(this);
@@ -154,7 +122,7 @@ public class Main extends Frame implements ActionListener
 		b2.addActionListener(this);
 		panel.add(b2);
 		
-		panel.setPreferredSize(new Dimension(625,500));
+		panel.setPreferredSize(new Dimension(500,500));
 		Container cp = frame.getContentPane();
 		cp.add(panel, BorderLayout.LINE_START);
 		frame.pack();
@@ -181,10 +149,7 @@ public class Main extends Frame implements ActionListener
 	{
 		if(e.getSource().equals(b2))
 		{
-			monthList.setSelectedIndex(0);
-			day.setText("0");
-			studentID.setText(" ");
-			studentID.setText("");
+			date.setDate(new Date());
 			emailUsername.setText(" ");
 			emailUsername.setText("");
 			classroom.setText(" ");
