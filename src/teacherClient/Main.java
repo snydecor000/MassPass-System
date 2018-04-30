@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -160,24 +161,25 @@ public class Main extends Frame implements ActionListener
 		}
 		if(e.getSource().equals(b))
 		{
-			recipient = emailUsername.getText() + "@students.centergrove.k12.in.us";
-			Emailer email = new Emailer(username,password,recipient);
-			try
+			if(!(emailUsername.getText().isEmpty()) && 
+					!(period.getText().isEmpty()) && 
+					!(classroom.getText().isEmpty()))
 			{
-				email.sendBarcodeEmail((date.getDate().getMonth()+1), date.getDate().getDate(), 
-						Integer.parseInt(period.getText()), classroom.getText());
-			} 
-			catch (NumberFormatException e1) 
-			{
-				e1.printStackTrace();
+				recipient = emailUsername.getText() + "@students.centergrove.k12.in.us";
+				Emailer email = new Emailer(username,password,recipient);
+				try
+				{
+					email.sendBarcodeEmail((date.getDate().getMonth()+1), date.getDate().getDate(), 
+							Integer.parseInt(period.getText()), classroom.getText());
+				}
+				catch (NumberFormatException | IOException | MessagingException e1)
+				{
+					e1.printStackTrace();
+				}
 			}
-			catch (IOException e1) 
+			else
 			{
-				e1.printStackTrace();
-			}
-			catch (MessagingException e1) 
-			{
-				e1.printStackTrace();
+				JOptionPane.showMessageDialog(this, "Incorrect");
 			}
 		}
 	}

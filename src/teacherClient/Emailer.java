@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -34,6 +39,8 @@ public class Emailer
 		Properties props = System.getProperties();
 		String host = "smtp.gmail.com";
 		
+		makeBarcode(month,day,period,room);
+		
 		props.put("mail.smtp.starttls.enable", "true");
 		props.put("mail.smtp.host", host);
 		props.put("mail.smtp.user", username);
@@ -46,15 +53,13 @@ public class Emailer
 		MimeBodyPart imagePart = new MimeBodyPart();
 		MimeMultipart content = new MimeMultipart();
 		
-		imagePart.attachFile("image.png");
-		
 		message.setFrom(new InternetAddress(username));
 		
 		InternetAddress toAddress = new InternetAddress();
 		toAddress = new InternetAddress(recipients);
 		message.addRecipient(Message.RecipientType.TO, toAddress);
 		
-		makeBarcode(month,day,period,room);
+		imagePart.attachFile("image.png");
 		message.setSubject("CG Mass Pass");
 		content.addBodyPart(createTextBody(month,day,period,room));
 		content.addBodyPart(imagePart);
@@ -116,55 +121,29 @@ public class Emailer
 	
 	private void makeBarcode(int m, int d, int p, String r) throws IOException
 	{
-		String month = "";
-		switch(m)
-		{
-		case 1:
-			month = "Jan";
-			break;
-		case 2:
-			month = "Feb";
-			break;
-		case 3:
-			month = "Mar";
-			break;
-		case 4:
-			month = "Apr";
-			break;
-		case 5:
-			month = "May";
-			break;
-		case 6:
-			month = "Jun";
-			break;
-		case 7:
-			month = "Jul";
-			break;
-		case 8:
-			month = "Aug";
-			break;
-		case 9:
-			month = "Sep";
-			break;
-		case 10:
-			month = "Oct";
-			break;
-		case 11:
-			month = "Nov";
-			break;
-		case 12:
-			month = "Dec";
-			break;
-		}
+		DateTimeFormatter currentDayF = DateTimeFormatter.ofPattern("dd");
+		DateTimeFormatter currentMonthF = DateTimeFormatter.ofPattern("MM");
+		LocalDate localDate = LocalDate.now();
+		String currentDayS = currentDayF.format(localDate);
+		String currentMonthS = currentMonthF.format(localDate);
+		
+		int key = Integer.parseInt(currentDayS+currentMonthS);
+		key = key - Integer.parseInt(currentDayS);
 		
 		String day = Integer.toString(d);
 		if(day.length() == 1)
 		{
 			day = "0" + day;
 		}
+		String month = Integer.toString(m);
+		if(month.length() == 1)
+		{
+			month = "0" + month;
+		}
 		//String URL = "http://bwipjs-api.metafloor.com/?bcid=code128&text=" + month + day + "." + p + "." + r + "&scaleX=2&includetext";
-		String imageUrl = "http://www.barcodes4.me/barcode/c39/" + month + day + r + ".png";
-		saveImage(imageUrl, "image.png");
+		String imageUrl = "http://www.barcodes4.me/barcode/c128a/" + month + day + r + p + key + ".jpg?width=400&height=200";
+		System.out.println(month + day + r + p + key);
+		saveImage(imageUrl, "image.jpg");
 	}
 	
 	private void saveImage(String imageUrl, String destinationFile) throws IOException 
