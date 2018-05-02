@@ -6,20 +6,24 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
 import javax.mail.MessagingException;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -34,6 +38,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Properties;
 
@@ -59,6 +64,8 @@ public class Main extends Frame implements ActionListener
 	private TextField period;
 	private JLabel l7;
 	private JXDatePicker date;
+	private JTextPane instructions;
+	private JLabel l8;
 	
 	private String[] months = {"(Month)","January","February","March","April",
 							"May","June","July","August","September",
@@ -92,7 +99,7 @@ public class Main extends Frame implements ActionListener
 		panel.add(date);
 		
 		l6 = new JLabel("");
-		l6.setPreferredSize(new Dimension(25,20));
+		l6.setPreferredSize(new Dimension(17,20));
 		panel.add(l6);
 		
 		emailUsername = new TextField("");
@@ -122,6 +129,40 @@ public class Main extends Frame implements ActionListener
 		b2 = new JButton("Reset");
 		b2.addActionListener(this);
 		panel.add(b2);
+		
+		l6 = new JLabel("");
+		l6.setPreferredSize(new Dimension(250,20));
+		panel.add(l6);
+		
+		l8 = new JLabel("Instructions:");
+		Font font = new Font("Courier", Font.BOLD,12);
+		l8.setFont(font);
+		l8.setPreferredSize(new Dimension(475,20));
+		panel.add(l8);
+		
+		instructions = new JTextPane();
+		instructions.setEditable(false);
+		instructions.setText("1)Select the date the pass will be used on\n"
+				+ "2)Enter in the student's email username (Ex. snydecor000)\n"
+				+ "3)Enter in the classroom number the student will travel to\n"
+				+ "*See table below if location does not have a number*\n"
+				+ "4)Enter in the period number the pass will be valid (1-5)\n"
+				+ "5)Confirm the information and then click the 'Send Pass' button\n"
+				+ "6)The 'Reset' button clears out all text fields\n"
+				+ "\n"
+				+ "\n"
+				+ "Attendance Office = 900\n"
+				+ "Guidance Office = 901\n"
+				+ "Main Office = 902\n"
+				+ "Deans Office = 903\n"
+				+ "Athletic Office = 904\n"
+				+ "Library = 905\n"
+				+ "Music Practice Rooms = 906\n"
+				+ "Media Center = 907\n"
+				+ "West Gym = 908\n"
+				+ "East Gym = 909\n"
+				+ "Student Activity Center = 910\n");
+		panel.add(instructions);
 		
 		panel.setPreferredSize(new Dimension(500,500));
 		Container cp = frame.getContentPane();
@@ -175,13 +216,42 @@ public class Main extends Frame implements ActionListener
 				catch (NumberFormatException | IOException | MessagingException e1)
 				{
 					e1.printStackTrace();
+					JOptionPane.showMessageDialog(this, "There was an error");
+					try
+					{
+						restartApplication();
+					}
+					catch (URISyntaxException | IOException e2)
+					{
+						e2.printStackTrace();
+					}
 				}
 			}
 			else
 			{
-				JOptionPane.showMessageDialog(this, "Incorrect");
+				JOptionPane.showMessageDialog(this, "Incorrect Inputs");
 			}
 		}
+	}
+	
+	public void restartApplication() throws URISyntaxException, IOException
+	{
+	  final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+	  final File currentJar = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+
+	  /* is it a jar file? */
+	  if(!currentJar.getName().endsWith(".jar"))
+	    return;
+
+	  /* Build command: java -jar application.jar */
+	  final ArrayList<String> command = new ArrayList<String>();
+	  command.add(javaBin);
+	  command.add("-jar");
+	  command.add(currentJar.getPath());
+
+	  final ProcessBuilder builder = new ProcessBuilder(command);
+	  builder.start();
+	  System.exit(0);
 	}
 }
 
