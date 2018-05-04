@@ -99,7 +99,7 @@ public class Main extends Frame implements ActionListener
 		panel.add(date);
 		
 		l6 = new JLabel("");
-		l6.setPreferredSize(new Dimension(17,20));
+		l6.setPreferredSize(new Dimension(31-date.getWidth(),20));
 		panel.add(l6);
 		
 		emailUsername = new TextField("");
@@ -156,12 +156,11 @@ public class Main extends Frame implements ActionListener
 				+ "Main Office = 902\n"
 				+ "Deans Office = 903\n"
 				+ "Athletic Office = 904\n"
-				+ "Library = 905\n"
+				+ "Media Center = 905\n"
 				+ "Music Practice Rooms = 906\n"
-				+ "Media Center = 907\n"
-				+ "West Gym = 908\n"
-				+ "East Gym = 909\n"
-				+ "Student Activity Center = 910\n");
+				+ "West Gym = 907\n"
+				+ "East Gym = 908\n"
+				+ "Student Activity Center = 909\n");
 		panel.add(instructions);
 		
 		panel.setPreferredSize(new Dimension(500,500));

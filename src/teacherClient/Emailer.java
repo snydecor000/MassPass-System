@@ -59,7 +59,7 @@ public class Emailer
 		toAddress = new InternetAddress(recipients);
 		message.addRecipient(Message.RecipientType.TO, toAddress);
 		
-		imagePart.attachFile("image.png");
+		imagePart.attachFile("image.jpg");
 		message.setSubject("CG Mass Pass");
 		content.addBodyPart(createTextBody(month,day,period,room));
 		content.addBodyPart(imagePart);
@@ -115,21 +115,14 @@ public class Emailer
 		}
 		
 		MimeBodyPart text = new MimeBodyPart();
-		text.setText("You have been summoned to " + r + " during period " + p + "/" + (p+5) + " on " + month + ", " + d);
+		text.setText("A Center Grove HS teacher has given you a pass to " + r 
+				+ " during period " + p + " on " + month + ", " + d 
+				+ "\nMake sure your screen is full brightness before scanning");
 		return text;
 	}
 	
 	private void makeBarcode(int m, int d, int p, String r) throws IOException
-	{
-		DateTimeFormatter currentDayF = DateTimeFormatter.ofPattern("dd");
-		DateTimeFormatter currentMonthF = DateTimeFormatter.ofPattern("MM");
-		LocalDate localDate = LocalDate.now();
-		String currentDayS = currentDayF.format(localDate);
-		String currentMonthS = currentMonthF.format(localDate);
-		
-		int key = Integer.parseInt(currentDayS+currentMonthS);
-		key = key - Integer.parseInt(currentDayS);
-		
+	{	
 		String day = Integer.toString(d);
 		if(day.length() == 1)
 		{
@@ -140,6 +133,10 @@ public class Emailer
 		{
 			month = "0" + month;
 		}
+		
+		int key = Integer.parseInt(day+month);
+		key = key - Integer.parseInt(day);
+		
 		//String URL = "http://bwipjs-api.metafloor.com/?bcid=code128&text=" + month + day + "." + p + "." + r + "&scaleX=2&includetext";
 		String imageUrl = "http://www.barcodes4.me/barcode/c128a/" + month + day + r + p + key + ".jpg?width=400&height=200";
 		System.out.println(month + day + r + p + key);
