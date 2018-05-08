@@ -23,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -38,15 +39,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Properties;
 
 public class Main extends Frame implements ActionListener 
 {
 	private static String username;
 	private static String password;
 	private static String recipient;
+	
+	private static ArrayList<String> preferences;
 	
 	private JLabel l;
 	private JComboBox monthList;
@@ -66,17 +70,23 @@ public class Main extends Frame implements ActionListener
 	private JXDatePicker date;
 	private JTextPane instructions;
 	private JLabel l8;
+	private JLabel l9;
+	private JLabel l10;
+	private TextField teacherName;
+	private TextField defaultClassroom;
+	private JButton b3;
 	
 	private String[] months = {"(Month)","January","February","March","April",
 							"May","June","July","August","September",
 							"October","November","December"};
 	
-	public Main()
+	public Main() throws FileNotFoundException, UnsupportedEncodingException
 	{
 		JFrame frame = new JFrame("MassPass");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
 		l = new JLabel("Date of Pass");
 		l.setPreferredSize(new Dimension(125,30));
@@ -164,23 +174,92 @@ public class Main extends Frame implements ActionListener
 		panel.add(instructions);
 		
 		panel.setPreferredSize(new Dimension(500,500));
+		
+		l9 = new JLabel("Teacher Name");
+		panel2.add(l9);
+		
+		l6 = new JLabel("");
+		l6.setPreferredSize(new Dimension(50,20));
+		panel2.add(l6);
+		
+		l10 = new JLabel("Default Class (Leave blank if none)");
+		panel2.add(l10);
+		
+		l6 = new JLabel("");
+		l6.setPreferredSize(new Dimension(150,20));
+		panel2.add(l6);
+		
+		teacherName = new TextField(preferences.get(2));
+		teacherName.setPreferredSize(new Dimension(150,20));
+		panel2.add(teacherName);
+		
+		l6 = new JLabel("");
+		l6.setPreferredSize(new Dimension(70-teacherName.getWidth(),20));
+		panel2.add(l6);
+		
+		if(preferences.size()>3)
+		{
+			defaultClassroom = new TextField(preferences.get(3));
+		}
+		else
+		{
+			defaultClassroom = new TextField();
+		}
+		defaultClassroom.setPreferredSize(new Dimension(50,20));
+		panel2.add(defaultClassroom);
+		
+		l6 = new JLabel("");
+		l6.setPreferredSize(new Dimension(200,20));
+		panel2.add(l6);
+		
+		b3 = new JButton("Save Preferences");
+		b3.addActionListener(this);
+		panel2.add(b3);
+		
+		panel2.setPreferredSize(new Dimension(500,500));
+		
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.addTab("Passes",panel);
+		tabbedPane.addTab("Preferences",panel2);
+		
 		Container cp = frame.getContentPane();
-		cp.add(panel, BorderLayout.LINE_START);
+		cp.add(tabbedPane, BorderLayout.LINE_START);
 		frame.pack();
 		frame.setVisible(true);
+		
+		savePreferences(preferences);
 	}
-	
-	public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, FileNotFoundException 
+
+	public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IOException 
 	{
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		Scanner in = new Scanner(new File("account.txt"));
-		ArrayList<String> account = new ArrayList<String>();
+		File prefFile = new File("preferences.txt");
+		if(!prefFile.exists())
+		{
+			prefFile.createNewFile();
+		}
+		Scanner in = new Scanner(new File("preferences.txt"));
+		preferences = new ArrayList<String>();
 		while (in.hasNextLine())
 		{
-			account.add(in.nextLine());
+			preferences.add(in.nextLine());
 		}
-		username = account.get(0);
-		password = account.get(1);
+		if(preferences.size()<2)
+		{
+			preferences.add(JOptionPane.showInputDialog("Enter in MassPass Username"));
+			preferences.add(JOptionPane.showInputDialog("Enter in MassPass Password"));
+		}
+		username = preferences.get(0);
+		password = preferences.get(1);
+		
+		if(preferences.size()<3)
+		{
+			preferences.add(JOptionPane.showInputDialog("Enter in Teacher Name"));
+		}
+		if(preferences.size()<4)
+		{
+			preferences.add("");
+		}
 		Main m = new Main();
 
 	}
@@ -193,8 +272,7 @@ public class Main extends Frame implements ActionListener
 			date.setDate(new Date());
 			emailUsername.setText(" ");
 			emailUsername.setText("");
-			classroom.setText(" ");
-			classroom.setText("");
+			classroom.setText(preferences.get(3));
 			period.setText(" ");
 			period.setText("");
 			
@@ -231,26 +309,49 @@ public class Main extends Frame implements ActionListener
 				JOptionPane.showMessageDialog(this, "Incorrect Inputs");
 			}
 		}
+		if(e.getSource().equals(b3))
+		{
+			preferences.set(2, teacherName.getText());
+			preferences.set(3, defaultClassroom.getText());
+			try 
+			{
+				savePreferences(preferences);
+			}
+			catch (FileNotFoundException | UnsupportedEncodingException e1)
+			{
+				e1.printStackTrace();
+			}
+		}
 	}
 	
 	public void restartApplication() throws URISyntaxException, IOException
 	{
-	  final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-	  final File currentJar = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+		final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+		final File currentJar = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 
-	  /* is it a jar file? */
-	  if(!currentJar.getName().endsWith(".jar"))
-	    return;
+		if(!currentJar.getName().endsWith(".jar"))
+		{
+			return;
+		}
+		final ArrayList<String> command = new ArrayList<String>();
+		command.add(javaBin);
+		command.add("-jar");
+		command.add(currentJar.getPath());
 
-	  /* Build command: java -jar application.jar */
-	  final ArrayList<String> command = new ArrayList<String>();
-	  command.add(javaBin);
-	  command.add("-jar");
-	  command.add(currentJar.getPath());
-
-	  final ProcessBuilder builder = new ProcessBuilder(command);
-	  builder.start();
-	  System.exit(0);
+		final ProcessBuilder builder = new ProcessBuilder(command);
+		builder.start();
+		System.exit(0);
+	}
+	
+	public void savePreferences(ArrayList<String> prefs) throws FileNotFoundException, UnsupportedEncodingException
+	{
+		classroom.setText(prefs.get(3));
+		PrintWriter writer = new PrintWriter("preferences.txt", "UTF-8");
+		for(String line : prefs)
+		{
+			writer.println(line);
+		}
+		writer.close();
 	}
 }
 
