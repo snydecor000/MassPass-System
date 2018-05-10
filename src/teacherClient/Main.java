@@ -2,23 +2,19 @@
  * Cory Snyder
 **/
 package teacherClient;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
-
 import javax.mail.MessagingException;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -27,22 +23,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-
 import org.jdesktop.swingx.JXDatePicker;
-
-import javafx.scene.control.DatePicker;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 public class Main extends Frame implements ActionListener 
 {
@@ -53,11 +40,6 @@ public class Main extends Frame implements ActionListener
 	private static ArrayList<String> preferences;
 	
 	private JLabel l;
-	private JComboBox monthList;
-	private TextField studentID;
-	private TextField day;
-	private JLabel l2;
-	private JLabel l3;
 	private TextField classroom;
 	private JLabel l4;
 	private JButton b;
@@ -75,10 +57,6 @@ public class Main extends Frame implements ActionListener
 	private TextField teacherName;
 	private TextField defaultClassroom;
 	private JButton b3;
-	
-	private String[] months = {"(Month)","January","February","March","April",
-							"May","June","July","August","September",
-							"October","November","December"};
 	
 	public Main() throws FileNotFoundException, UnsupportedEncodingException
 	{
@@ -244,6 +222,7 @@ public class Main extends Frame implements ActionListener
 		{
 			preferences.add(in.nextLine());
 		}
+		in.close();
 		if(preferences.size()<2)
 		{
 			preferences.add(JOptionPane.showInputDialog("Enter in MassPass Username"));
