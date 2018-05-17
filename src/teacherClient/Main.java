@@ -254,7 +254,6 @@ public class Main extends Frame implements ActionListener
 			classroom.setText(preferences.get(3));
 			period.setText(" ");
 			period.setText("");
-			
 		}
 		if(e.getSource().equals(b))
 		{
