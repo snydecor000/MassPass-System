@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 
 public class Main extends Frame implements ActionListener 
 {
@@ -208,7 +209,9 @@ public class Main extends Frame implements ActionListener
 		savePreferences(preferences);
 	}
 
-	public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IOException 
+	public static void main(String[] args) throws ClassNotFoundException, 
+	InstantiationException, IllegalAccessException, 
+	UnsupportedLookAndFeelException, IOException 
 	{
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		File prefFile = new File("preferences.txt");
@@ -268,7 +271,7 @@ public class Main extends Frame implements ActionListener
 					email.sendBarcodeEmail((date.getDate().getMonth()+1), date.getDate().getDate(), 
 							Integer.parseInt(period.getText()), classroom.getText());
 				}
-				catch (NumberFormatException | IOException | MessagingException e1)
+				catch (NumberFormatException | IOException | MessagingException | NoSuchAlgorithmException e1)
 				{
 					e1.printStackTrace();
 					JOptionPane.showMessageDialog(this, "There was an error");
@@ -304,8 +307,10 @@ public class Main extends Frame implements ActionListener
 	
 	public void restartApplication() throws URISyntaxException, IOException
 	{
-		final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-		final File currentJar = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+		final String javaBin = System.getProperty("java.home") + 
+				File.separator + "bin" + File.separator + "java";
+		final File currentJar = new File(Main.class.getProtectionDomain().
+				getCodeSource().getLocation().toURI());
 
 		if(!currentJar.getName().endsWith(".jar"))
 		{
@@ -321,7 +326,8 @@ public class Main extends Frame implements ActionListener
 		System.exit(0);
 	}
 	
-	public void savePreferences(ArrayList<String> prefs) throws FileNotFoundException, UnsupportedEncodingException
+	public void savePreferences(ArrayList<String> prefs) throws 
+	FileNotFoundException, UnsupportedEncodingException
 	{
 		classroom.setText(prefs.get(3));
 		PrintWriter writer = new PrintWriter("preferences.txt", "UTF-8");
