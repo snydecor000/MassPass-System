@@ -150,7 +150,6 @@ public class Main extends Frame implements ActionListener
 		DateTimeFormatter currentDayF = DateTimeFormatter.ofPattern("dd");
 		LocalDate localDate = LocalDate.now();
 		return(currentDayF.format(localDate));
-		
 	}
 	
 	public String getMonth()
@@ -273,6 +272,7 @@ public class Main extends Frame implements ActionListener
 	{
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		Main m = new Main();
+		Pass p = new Pass("05182341125");
 	}
 
 	@Override
