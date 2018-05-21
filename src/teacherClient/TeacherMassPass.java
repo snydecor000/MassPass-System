@@ -32,7 +32,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 
-public class Main extends Frame implements ActionListener 
+public class TeacherMassPass extends Frame implements ActionListener 
 {
 	private static String username;
 	private static String password;
@@ -59,7 +59,7 @@ public class Main extends Frame implements ActionListener
 	private TextField defaultClassroom;
 	private JButton b3;
 	
-	public Main() throws FileNotFoundException, UnsupportedEncodingException
+	public TeacherMassPass() throws FileNotFoundException, UnsupportedEncodingException
 	{
 		JFrame frame = new JFrame("MassPass");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -242,7 +242,7 @@ public class Main extends Frame implements ActionListener
 		{
 			preferences.add("");
 		}
-		Main m = new Main();
+		TeacherMassPass m = new TeacherMassPass();
 
 	}
 	
@@ -309,7 +309,7 @@ public class Main extends Frame implements ActionListener
 	{
 		final String javaBin = System.getProperty("java.home") + 
 				File.separator + "bin" + File.separator + "java";
-		final File currentJar = new File(Main.class.getProtectionDomain().
+		final File currentJar = new File(TeacherMassPass.class.getProtectionDomain().
 				getCodeSource().getLocation().toURI());
 
 		if(!currentJar.getName().endsWith(".jar"))

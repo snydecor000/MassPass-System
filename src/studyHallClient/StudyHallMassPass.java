@@ -46,7 +46,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-public class Main extends Frame implements ActionListener
+public class StudyHallMassPass extends Frame implements ActionListener
 {
 	private JFrame frame;
 	private JLabel l;
@@ -176,7 +176,7 @@ public class Main extends Frame implements ActionListener
 		writer.close();
 	}
 	
-	public Main() throws IOException
+	public StudyHallMassPass() throws IOException
 	{
 		students = getStudentList();
 		
@@ -271,7 +271,7 @@ public class Main extends Frame implements ActionListener
 	InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException 
 	{
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		Main m = new Main();
+		StudyHallMassPass m = new StudyHallMassPass();
 		Pass p = new Pass("05182341125");
 	}
 
