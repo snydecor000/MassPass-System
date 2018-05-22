@@ -2,11 +2,17 @@ package studyHallClient;
 
 public class Student 
 {
+	protected enum StudentStatus
+	{
+		CheckedIn, CheckedOut;
+	}
+	private StudentStatus status;
 	private String studentID;
 	private String name;
 	private String location;
 	private String timeIn;
 	private String timeOut;
+	private Pass pass;
 	
 	public Student(String id, String n, String loc, String tIn, String tOut)
 	{
@@ -15,6 +21,14 @@ public class Student
 		location = loc;
 		timeIn = tIn;
 		timeOut = tOut;
+		if(timeOut.isEmpty() && location.isEmpty())
+		{
+			status = StudentStatus.CheckedIn;
+		}
+		else
+		{
+			status = StudentStatus.CheckedOut;
+		}
 	}
 	
 	public Student()
@@ -24,6 +38,7 @@ public class Student
 		location = "";
 		timeIn = "";
 		timeOut = "";
+		status = StudentStatus.CheckedIn;
 	}
 	
 	public Student(String id, String n)
@@ -33,6 +48,7 @@ public class Student
 		location = "";
 		timeIn = "";
 		timeOut = "";
+		status = StudentStatus.CheckedIn;
 	}
 	
 	public String getIDNumber()
@@ -77,11 +93,60 @@ public class Student
 	
 	public String getLocation()
 	{
-		return location;
+		if(status.equals(StudentStatus.CheckedIn))
+		{
+			return "Here";
+		}
+		else
+		{
+			return location;
+		}
 	}
 	
 	public void setLocation(String loc)
 	{
 		location = loc;
 	}
+	
+	public void givePass(String barcode)
+	{
+		pass = new Pass(barcode);
+	}
+	
+	public void process(String hour, String minute, String period)
+	{
+		if(!pass.equals(null))
+		{
+			if(status.equals(StudentStatus.CheckedIn) && location.isEmpty() && timeOut.isEmpty() && (pass.verifyPass(period)))
+			{
+				status = StudentStatus.CheckedOut;
+				this.setLocation(pass.getLocation());
+				this.setTimeOut(hour + ":" + minute);
+			}
+			else if(status.equals(StudentStatus.CheckedOut) && (!location.isEmpty()) && (!timeOut.isEmpty()))
+			{
+				status = StudentStatus.CheckedIn;
+				this.setTimeIn(hour + ":" + minute);
+			}
+			else if(status.equals(StudentStatus.CheckedIn) && (timeIn.isEmpty()) && (location.isEmpty()) && (timeOut.isEmpty()))
+			{
+				status = StudentStatus.CheckedOut;
+				this.setLocation(pass.getLocation());
+				this.setTimeOut(hour + ":" + minute);
+				this.setTimeIn("");
+			}
+			else
+			{
+				this.setLocation("");
+				this.setTimeOut("");
+				this.setTimeIn("");
+			}
+		}
+	}
+
+	public String toString()
+	{
+		return studentID + "," + name + "," + timeOut + "," + location + "," + timeIn + ",";
+	}
+
 }

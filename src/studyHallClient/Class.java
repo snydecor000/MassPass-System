@@ -3,6 +3,7 @@ package studyHallClient;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -10,11 +11,15 @@ public class Class
 {
 	private ArrayList<Student> students;
 	private String name;
-	public String period;
+	private String period;
+	private File classFile;
 	
-	public Class(String name, String period)
+	public Class(String n, String p)
 	{
-		File classFile = new File(name+"_"+period+".txt");
+		name = n;
+		period = p;
+		classFile = new File(name+"_"+period+".csv");
+		students = new ArrayList<Student>();
 		if(!classFile.exists())
 		{
 			try
@@ -25,7 +30,6 @@ public class Class
 			{
 				e.printStackTrace();
 			}
-			students = new ArrayList<Student>();
 		}
 		else
 		{
@@ -71,5 +75,56 @@ public class Class
 	public ArrayList<Student> getStudents()
 	{
 		return students;
+	}
+	
+	public void addStudent(Student s)
+	{
+		students.add(s);
+		saveStudents();
+	}
+	
+	public void saveStudents()
+	{
+		try
+		{
+			PrintWriter pw = new PrintWriter(classFile);
+			for (Student s : students)
+			{
+				pw.println(s.toString());
+			}
+			pw.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public Student getStudent(String idNumber)
+	{
+		Student student = new Student();
+		for(Student s : students)
+		{
+			if(s.getIDNumber().equals(idNumber))
+			{
+				student = s;
+			}
+		}
+		return student;
+	}
+	
+	public String getPeriod()
+	{
+		return period;
+	}
+	
+	public String getName()
+	{
+		return name;
+	}
+	
+	public String toString()
+	{
+		return name + "," + period + ",";
 	}
 }

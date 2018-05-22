@@ -32,7 +32,7 @@ public class Pass
 			case FailedEncryption:
 				return "This pass is fake";
 			default:
-				return "This is a bad pass";
+				return "This is a really bad pass";
 			}
 		}
 	}
