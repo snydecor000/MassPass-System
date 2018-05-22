@@ -39,6 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -56,16 +57,19 @@ public class StudyHallMassPass extends Frame implements ActionListener
 	private JLabel l3;
 	private JComboBox<String> periods;
 	private LinkedHashMap<String,String> students;
-    DefaultTableModel model = new DefaultTableModel()
+	JTabbedPane tabbedPane;
+	Classes classes;
+	ArrayList<JTable> tables;
+	/*DefaultTableModel model = new DefaultTableModel();
     {
     	@Override
     	public boolean isCellEditable(int row, int column)
     	{
     		return column == 1;
     	}
-    };
+    };*/
 	
-	public static LinkedHashMap<String, String> getStudentList() throws IOException
+	/*public static LinkedHashMap<String, String> getStudentList() throws IOException
 	{
 		LinkedHashMap<String,String> students = new LinkedHashMap<String,String>();
 		File file = new File("students.txt");
@@ -89,7 +93,7 @@ public class StudyHallMassPass extends Frame implements ActionListener
 			file.createNewFile();
 			return new LinkedHashMap<String,String>();
 		}
-	}
+	}*/
 	
 	private String verifyPass(String barcode)
 	{
@@ -132,19 +136,6 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		}
 	}
 	
-	public int getRow(DefaultTableModel m, String rowName)
-	{
-		int row = -1;
-		for(int x = 0; x < model.getRowCount(); x++)
-		{
-			if(model.getValueAt(x, 0).equals(rowName))
-			{
-				row = x;
-			}
-		}
-		return row;
-	}
-	
 	public String getDay()
 	{
 		DateTimeFormatter currentDayF = DateTimeFormatter.ofPattern("dd");
@@ -166,7 +157,7 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		return (currentTimeF.format(localDateTime));
 	}
 	
-	public void saveStudents() throws FileNotFoundException, UnsupportedEncodingException
+	/*public void saveStudents() throws FileNotFoundException, UnsupportedEncodingException
 	{
 		PrintWriter writer = new PrintWriter("students.txt", "UTF-8");
 		for(int x = 0; x < model.getRowCount();x++)
@@ -174,11 +165,67 @@ public class StudyHallMassPass extends Frame implements ActionListener
 			writer.println(model.getValueAt(x, 0)+"#"+model.getValueAt(x, 1)+"#"+model.getValueAt(x, 2)+"#"+model.getValueAt(x, 3)+"#"+model.getValueAt(x, 4));
 		}
 		writer.close();
+	}*/
+	
+	public void updateRow(Class c, DefaultTableModel model, String rowName)
+	{
+		model.setValueAt(c.getStudent(rowName).getTimeOut(), getRow(model,rowName), 2);
+		model.setValueAt(c.getStudent(rowName).getLocation(), getRow(model,rowName), 3);
+		model.setValueAt(c.getStudent(rowName).getTimeIn(), getRow(model,rowName), 4);
+	}
+	
+	public int getRow(DefaultTableModel model, String rowName)
+	{
+		int row = -1;
+		for(int x = 0; x < model.getRowCount(); x++)
+		{
+			if(model.getValueAt(x, 0).equals(rowName))
+			{
+				row = x;
+			}
+		}
+		return row;
 	}
 	
 	public StudyHallMassPass() throws IOException
 	{
-		students = getStudentList();
+		tables = new ArrayList<JTable>();
+		for(int x = 1;x < 11;x++)
+		{
+			DefaultTableModel model = new DefaultTableModel()
+		    {
+		    	@Override
+		    	public boolean isCellEditable(int row, int column)
+		    	{
+		    		return column == 1;
+		    	}
+		    };
+	        model.addColumn("Student ID");
+	        model.addColumn("Name");
+	        model.addColumn("Time Out");
+	        model.addColumn("Location");
+	        model.addColumn("Time In");
+		    tables.add(new JTable(model));
+		}
+		
+		tabbedPane = new JTabbedPane();
+		classes = new Classes();
+		
+		for(Class c : classes.getClasses())
+		{
+			JPanel j = new JPanel();
+			j.add(tables.get(Integer.parseInt(c.getPeriod())-1));
+			tabbedPane.add(c.getPeriod(),j);
+		}
+		
+		for(Class c : classes.getClasses())
+		{
+			for(Student s : c.getStudents())
+			{
+				DefaultTableModel model = (DefaultTableModel)tables.get(Integer.parseInt(c.getPeriod())-1).getModel();
+				model.addRow(new Object[] {s.getIDNumber(),s.getName(),s.getTimeOut(),s.getLocation(),s.getTimeIn()});
+			}
+		}
 		
 		JFrame frame = new JFrame("MassPass");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -213,7 +260,7 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		JPanel bottom = new JPanel();
 		bottom.setLayout(new GridBagLayout());
 		//bottom.setLayout(new BoxLayout(bottom, BoxLayout.X_AXIS));
-//		bottom.setMaximumSize(new Dimension(300,20));
+		//bottom.setMaximumSize(new Dimension(300,20));
 		l2 = new JLabel("Pass Info:  ");
 		bottom.add(l2);
 		classID = new JTextField();
@@ -232,31 +279,15 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		l3 = new JLabel("Current Period:  ");
 		options.add(l3);
 		periods = new JComboBox<String>();
-		periods.addItem("1");
+		/*periods.addItem("1");
 		periods.addItem("2");
 		periods.addItem("3");
 		periods.addItem("4");
-		periods.addItem("5");
+		periods.addItem("5");*/
 		options.add(periods);
 		inputs.add(options);
 
-        JTable table = new JTable(model);
-        table.removeEditor();
-        
-        model.addColumn("Student ID");
-        model.addColumn("Name");
-        model.addColumn("Time Out");
-        model.addColumn("Location");
-        model.addColumn("Time In");
-        
-        for(String idNum : students.keySet())
-        {
-        	model.addRow(new Object[] {idNum, students.get(idNum)});
-        }
-        
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        JScrollPane pane = new JScrollPane(table);
-        panel.add(pane);
+		panel.add(tabbedPane);
 		
 		//panel.setPreferredSize(new Dimension(600,200));
 		Container cp = frame.getContentPane();
@@ -281,18 +312,19 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		System.out.println(e.getActionCommand());
 		if(e.getSource().equals(studentID))
 		{
-			if(e.getActionCommand().length()>=8)
+			String per = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+			Class cl = classes.getClass(per);
+			Student stu = cl.getStudent(e.getActionCommand());
+			DefaultTableModel model = (DefaultTableModel) tables.get(Integer.parseInt(per)).getModel();
+			
+			if(e.getActionCommand().matches("^\\d{8}$"))
 			{
-				if(getRow(model,studentID.getText()) != -1)
+				if(stu != null)
 				{
-					if(!model.getValueAt(getRow(model,studentID.getText()), 2).toString().isEmpty())
-					{
-						model.setValueAt(getTime(), getRow(model,studentID.getText()), 4);
-						studentID.setText(" ");
-						studentID.setText("");
-						classID.setText(" ");
-						classID.setText("");
-					}
+					stu.giveEmptyPass();
+					stu.process(getTime(), per);
+					System.out.println(per);
+					updateRow(cl, model,stu.getIDNumber());
 				}
 			}
 		}
@@ -300,7 +332,36 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		{
 			if(e.getActionCommand().length()>=10)
 			{
-				if(verifyPass(classID.getText()).isEmpty())
+				String per = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+				System.out.println("Per:" + per);
+				Class cl = classes.getClass(per);
+				
+				if(cl != null)
+				{
+					System.out.println("cl:" + cl.toString());
+					Student stu = cl.getStudent(e.getActionCommand());
+					DefaultTableModel model = (DefaultTableModel) tables.get(Integer.parseInt(per)).getModel();
+					
+					if(stu != null)
+					{
+						System.out.println("stu:" + stu.toString());
+						stu.givePass(e.getActionCommand());
+						stu.process(getTime(), per);
+					}
+					else
+					{
+						if(studentID.getText().matches("^\\d{8}$"))
+						{
+							stu = new Student(studentID.getText(),JOptionPane.showInputDialog("Enter in First and Last Name"));
+							cl.addStudent(stu);
+							model.addRow(new Object[] {studentID.getText(), 
+									stu.getName(), 
+									getTime(), ""});
+						}
+					}
+				}
+				
+				/*if(verifyPass(classID.getText()).isEmpty())
 				{
 					if(getRow(model,studentID.getText()) != -1)
 					{
@@ -344,7 +405,7 @@ public class StudyHallMassPass extends Frame implements ActionListener
 					studentID.setText("");
 					classID.setText(" ");
 					classID.setText("");
-				}
+				}*/
 			}
 		}
 	}

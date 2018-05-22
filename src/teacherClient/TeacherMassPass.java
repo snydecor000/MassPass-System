@@ -135,7 +135,7 @@ public class TeacherMassPass extends Frame implements ActionListener
 				+ "2)Enter in the student's email username (Ex. snydecor000)\n"
 				+ "3)Enter in the classroom number the student will travel to\n"
 				+ "*See table below if location does not have a number*\n"
-				+ "4)Enter in the period number the pass will be valid (1-5)\n"
+				+ "4)Enter in the period number the pass will be valid\n"
 				+ "5)Confirm the information and then click the 'Send Pass' button\n"
 				+ "6)The 'Reset' button clears out all text fields\n"
 				+ "\n"

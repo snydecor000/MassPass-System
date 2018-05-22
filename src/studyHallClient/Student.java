@@ -113,27 +113,35 @@ public class Student
 		pass = new Pass(barcode);
 	}
 	
-	public void process(String hour, String minute, String period)
+	public void giveEmptyPass()
 	{
-		if(!pass.equals(null))
+		pass = null;
+	}
+	
+ 	public void process(String time, String period)
+	{
+		if(pass != null)
 		{
 			if(status.equals(StudentStatus.CheckedIn) && location.isEmpty() && timeOut.isEmpty() && (pass.verifyPass(period)))
 			{
 				status = StudentStatus.CheckedOut;
 				this.setLocation(pass.getLocation());
-				this.setTimeOut(hour + ":" + minute);
-			}
-			else if(status.equals(StudentStatus.CheckedOut) && (!location.isEmpty()) && (!timeOut.isEmpty()))
-			{
-				status = StudentStatus.CheckedIn;
-				this.setTimeIn(hour + ":" + minute);
+				this.setTimeOut(time);
 			}
 			else if(status.equals(StudentStatus.CheckedIn) && (timeIn.isEmpty()) && (location.isEmpty()) && (timeOut.isEmpty()))
 			{
 				status = StudentStatus.CheckedOut;
 				this.setLocation(pass.getLocation());
-				this.setTimeOut(hour + ":" + minute);
+				this.setTimeOut(time);
 				this.setTimeIn("");
+			}
+		}
+		else
+		{
+			if(status.equals(StudentStatus.CheckedOut) && (!location.isEmpty()) && (!timeOut.isEmpty()))
+			{
+				status = StudentStatus.CheckedIn;
+				this.setTimeIn(time);
 			}
 			else
 			{

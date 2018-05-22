@@ -6,8 +6,6 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import javax.swing.JOptionPane;
-
 public class Pass 
 {
 	protected enum PassStatus

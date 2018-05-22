@@ -70,6 +70,32 @@ public class Classes
 		}
 	}
 	
+	/*public Class getClass(String fullName)
+	{
+		Class cl = new Class();
+		for(Class c : classes)
+		{
+			if(c.getFullName().equals(fullName))
+			{
+				cl = c;
+			}
+		}
+		return cl;
+	}*/
+	
+	public Class getClass(String period)
+	{
+		Class cl = null;
+		for(Class c : classes)
+		{
+			if(c.getPeriod().equals(period))
+			{
+				cl = c;
+			}
+		}
+		return cl;
+	}
+	
 	public ArrayList<Class> getClasses()
 	{
 		return classes;

@@ -14,6 +14,12 @@ public class Class
 	private String period;
 	private File classFile;
 	
+	public Class()
+	{
+		name = "";
+		period = "";
+	}
+	
 	public Class(String n, String p)
 	{
 		name = n;
@@ -102,7 +108,7 @@ public class Class
 	
 	public Student getStudent(String idNumber)
 	{
-		Student student = new Student();
+		Student student = null;
 		for(Student s : students)
 		{
 			if(s.getIDNumber().equals(idNumber))
@@ -121,6 +127,11 @@ public class Class
 	public String getName()
 	{
 		return name;
+	}
+	
+	public String getFullName()
+	{
+		return (name + "_" + period);
 	}
 	
 	public String toString()
