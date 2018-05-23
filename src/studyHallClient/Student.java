@@ -21,34 +21,34 @@ public class Student
 		location = loc;
 		timeIn = tIn;
 		timeOut = tOut;
-		if(timeOut.isEmpty() && location.isEmpty())
-		{
-			status = StudentStatus.CheckedIn;
-		}
-		else
-		{
-			status = StudentStatus.CheckedOut;
-		}
+//		if(timeOut.isEmpty() && location.isEmpty())
+//		{
+//			status = StudentStatus.CheckedIn;
+//		}
+//		else
+//		{
+//			status = StudentStatus.CheckedOut;
+//		}
 	}
 	
 	public Student()
 	{
 		studentID = "";
 		name = "";
-		location = "";
+		location = "Here";
 		timeIn = "";
 		timeOut = "";
-		status = StudentStatus.CheckedIn;
+		//status = StudentStatus.CheckedIn;
 	}
 	
 	public Student(String id, String n)
 	{
 		studentID = id;
 		name = n;
-		location = "";
+		location = "Here";
 		timeIn = "";
 		timeOut = "";
-		status = StudentStatus.CheckedIn;
+		//status = StudentStatus.CheckedIn;
 	}
 	
 	public String getIDNumber()
@@ -93,19 +93,16 @@ public class Student
 	
 	public String getLocation()
 	{
-		if(status.equals(StudentStatus.CheckedIn))
-		{
-			return "Here";
-		}
-		else
-		{
-			return location;
-		}
+		return location;
 	}
 	
 	public void setLocation(String loc)
 	{
 		location = loc;
+		if(location.matches("^\\d{3}$"))
+		{
+			status = StudentStatus.CheckedOut;
+		}
 	}
 	
 	public void givePass(String barcode)
@@ -118,37 +115,37 @@ public class Student
 		pass = null;
 	}
 	
- 	public void process(String time, String period)
+ 	public String process(String time, String period)
 	{
 		if(pass != null)
 		{
-			if(status.equals(StudentStatus.CheckedIn) && location.isEmpty() && timeOut.isEmpty() && (pass.verifyPass(period)))
+			if(location.equals("Here") && timeOut.isEmpty() && (pass.verifyPass(period)))
 			{
-				status = StudentStatus.CheckedOut;
-				this.setLocation(pass.getLocation());
-				this.setTimeOut(time);
-			}
-			else if(status.equals(StudentStatus.CheckedIn) && (timeIn.isEmpty()) && (location.isEmpty()) && (timeOut.isEmpty()))
-			{
-				status = StudentStatus.CheckedOut;
 				this.setLocation(pass.getLocation());
 				this.setTimeOut(time);
 				this.setTimeIn("");
 			}
+			else if(location.equals("Here") && (!timeOut.isEmpty()) && (!timeIn.isEmpty()) && (pass.verifyPass(period)))
+			{
+				this.setTimeOut(time);
+				this.setLocation(pass.getLocation());
+				this.setTimeIn("");
+			}
+			return pass.getPassStatus().toString();
 		}
 		else
 		{
-			if(status.equals(StudentStatus.CheckedOut) && (!location.isEmpty()) && (!timeOut.isEmpty()))
+			if((!location.equals("Here")) && (!timeOut.isEmpty()) && (timeIn.isEmpty()))
 			{
-				status = StudentStatus.CheckedIn;
+				this.setLocation("Here");
 				this.setTimeIn(time);
 			}
 			else
 			{
-				this.setLocation("");
 				this.setTimeOut("");
 				this.setTimeIn("");
 			}
+			return "";
 		}
 	}
 

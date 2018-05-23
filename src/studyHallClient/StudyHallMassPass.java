@@ -42,6 +42,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.LineBorder;
@@ -56,85 +57,9 @@ public class StudyHallMassPass extends Frame implements ActionListener
 	private JTextField classID;
 	private JLabel l3;
 	private JComboBox<String> periods;
-	private LinkedHashMap<String,String> students;
 	JTabbedPane tabbedPane;
 	Classes classes;
 	ArrayList<JTable> tables;
-	/*DefaultTableModel model = new DefaultTableModel();
-    {
-    	@Override
-    	public boolean isCellEditable(int row, int column)
-    	{
-    		return column == 1;
-    	}
-    };*/
-	
-	/*public static LinkedHashMap<String, String> getStudentList() throws IOException
-	{
-		LinkedHashMap<String,String> students = new LinkedHashMap<String,String>();
-		File file = new File("students.txt");
-		if(file.exists())
-		{
-			Scanner in = new Scanner(file);
-			while(in.hasNextLine())
-			{
-				String line = in.nextLine();
-				if(!line.isEmpty())
-				{
-					students.put(line.substring(0, line.indexOf('#')), 
-							line.substring(line.indexOf('#')+1));
-				}
-			}
-			in.close();
-			return students;
-		}
-		else
-		{
-			file.createNewFile();
-			return new LinkedHashMap<String,String>();
-		}
-	}*/
-	
-	private String verifyPass(String barcode)
-	{
-		String k = barcode.substring(8);
-		DateTimeFormatter currentDayF = DateTimeFormatter.ofPattern("dd");
-		DateTimeFormatter currentMonthF = DateTimeFormatter.ofPattern("MM");
-		LocalDate localDate = LocalDate.now();
-		String currentDayS = currentDayF.format(localDate);
-		String currentMonthS = currentMonthF.format(localDate);
-		
-		int key = Integer.parseInt(currentDayS+currentMonthS);
-		key = key - Integer.parseInt(currentDayS);
-		
-		byte[] bytesOfMessage = ByteBuffer.allocate(4).putInt(key).array();
-		MessageDigest md;
-		byte[] thedigest = {0,0,0,0};
-		try
-		{
-			md = MessageDigest.getInstance("MD5");
-			thedigest = md.digest(bytesOfMessage);
-		}
-		catch (NoSuchAlgorithmException e)
-		{
-			JOptionPane.showMessageDialog(frame, "this went very wrong");
-			System.exit(0);
-		}
-		
-		
-		if(Integer.parseInt(k)!=thedigest[0])
-		{
-			return "Pass can only be used on the designated day";
-		}
-		else if(!periods.getSelectedItem().toString().equals(Character.toString(barcode.charAt(7))))
-		{
-			return "Pass can only be used on the designated period";
-		}
-		else
-		{
-			return "";
-		}
-	}
 	
 	public String getDay()
 	{
@@ -157,16 +82,6 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		return (currentTimeF.format(localDateTime));
 	}
 	
-	/*public void saveStudents() throws FileNotFoundException, UnsupportedEncodingException
-	{
-		PrintWriter writer = new PrintWriter("students.txt", "UTF-8");
-		for(int x = 0; x < model.getRowCount();x++)
-		{
-			writer.println(model.getValueAt(x, 0)+"#"+model.getValueAt(x, 1)+"#"+model.getValueAt(x, 2)+"#"+model.getValueAt(x, 3)+"#"+model.getValueAt(x, 4));
-		}
-		writer.close();
-	}*/
-	
 	public void updateRow(Class c, DefaultTableModel model, String rowName)
 	{
 		model.setValueAt(c.getStudent(rowName).getTimeOut(), getRow(model,rowName), 2);
@@ -176,7 +91,7 @@ public class StudyHallMassPass extends Frame implements ActionListener
 	
 	public int getRow(DefaultTableModel model, String rowName)
 	{
-		int row = -1;
+		int row = -2;
 		for(int x = 0; x < model.getRowCount(); x++)
 		{
 			if(model.getValueAt(x, 0).equals(rowName))
@@ -205,7 +120,8 @@ public class StudyHallMassPass extends Frame implements ActionListener
 	        model.addColumn("Time Out");
 	        model.addColumn("Location");
 	        model.addColumn("Time In");
-		    tables.add(new JTable(model));
+	        JTable j = new JTable(model);
+		    tables.add(j);
 		}
 		
 		tabbedPane = new JTabbedPane();
@@ -214,15 +130,15 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		for(Class c : classes.getClasses())
 		{
 			JPanel j = new JPanel();
-			j.add(tables.get(Integer.parseInt(c.getPeriod())-1));
+			j.add(new JScrollPane(tables.get(Integer.parseInt(c.getPeriod())-1)));
 			tabbedPane.add(c.getPeriod(),j);
 		}
 		
 		for(Class c : classes.getClasses())
 		{
+			DefaultTableModel model = (DefaultTableModel)tables.get(Integer.parseInt(c.getPeriod())-1).getModel();
 			for(Student s : c.getStudents())
 			{
-				DefaultTableModel model = (DefaultTableModel)tables.get(Integer.parseInt(c.getPeriod())-1).getModel();
 				model.addRow(new Object[] {s.getIDNumber(),s.getName(),s.getTimeOut(),s.getLocation(),s.getTimeIn()});
 			}
 		}
@@ -276,20 +192,10 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		inputs.add(textFields);
 		
 		JPanel options = new JPanel();
-		l3 = new JLabel("Current Period:  ");
-		options.add(l3);
-		periods = new JComboBox<String>();
-		/*periods.addItem("1");
-		periods.addItem("2");
-		periods.addItem("3");
-		periods.addItem("4");
-		periods.addItem("5");*/
-		options.add(periods);
-		inputs.add(options);
+		//inputs.add(options);
 
 		panel.add(tabbedPane);
 		
-		//panel.setPreferredSize(new Dimension(600,200));
 		Container cp = frame.getContentPane();
 		cp.add(panel, BorderLayout.LINE_START);
 		
@@ -303,7 +209,6 @@ public class StudyHallMassPass extends Frame implements ActionListener
 	{
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		StudyHallMassPass m = new StudyHallMassPass();
-		Pass p = new Pass("05182341125");
 	}
 
 	@Override
@@ -315,7 +220,7 @@ public class StudyHallMassPass extends Frame implements ActionListener
 			String per = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
 			Class cl = classes.getClass(per);
 			Student stu = cl.getStudent(e.getActionCommand());
-			DefaultTableModel model = (DefaultTableModel) tables.get(Integer.parseInt(per)).getModel();
+			DefaultTableModel model = (DefaultTableModel) tables.get(Integer.parseInt(per)-1).getModel();
 			
 			if(e.getActionCommand().matches("^\\d{8}$"))
 			{
@@ -323,89 +228,64 @@ public class StudyHallMassPass extends Frame implements ActionListener
 				{
 					stu.giveEmptyPass();
 					stu.process(getTime(), per);
-					System.out.println(per);
 					updateRow(cl, model,stu.getIDNumber());
+					cl.saveStudents();
 				}
+				studentID.setText(" ");
+				studentID.setText("");
+				classID.setText(" ");
+				classID.setText("");
 			}
 		}
 		if(e.getSource().equals(classID))
 		{
 			if(e.getActionCommand().length()>=10)
 			{
-				String per = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
-				System.out.println("Per:" + per);
-				Class cl = classes.getClass(per);
-				
-				if(cl != null)
+				if(e.getActionCommand().matches("^\\d{10,11}$") && studentID.getText().matches("^\\d{8}$"))
 				{
-					System.out.println("cl:" + cl.toString());
-					Student stu = cl.getStudent(e.getActionCommand());
-					DefaultTableModel model = (DefaultTableModel) tables.get(Integer.parseInt(per)).getModel();
+					String per = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+					Class cl = classes.getClass(per);
 					
-					if(stu != null)
+					if(cl != null)
 					{
-						System.out.println("stu:" + stu.toString());
-						stu.givePass(e.getActionCommand());
-						stu.process(getTime(), per);
-					}
-					else
-					{
-						if(studentID.getText().matches("^\\d{8}$"))
+						Student stu = cl.getStudent(studentID.getText());
+						DefaultTableModel model = (DefaultTableModel) tables.get(Integer.parseInt(per)-1).getModel();
+						
+						if(stu != null)
 						{
-							stu = new Student(studentID.getText(),JOptionPane.showInputDialog("Enter in First and Last Name"));
-							cl.addStudent(stu);
-							model.addRow(new Object[] {studentID.getText(), 
-									stu.getName(), 
-									getTime(), ""});
-						}
-					}
-				}
-				
-				/*if(verifyPass(classID.getText()).isEmpty())
-				{
-					if(getRow(model,studentID.getText()) != -1)
-					{
-						System.out.println(model.getValueAt(getRow(model,studentID.getText()), 1).toString());
-						if(model.getValueAt(getRow(model,studentID.getText()), 1).toString().isEmpty())
-						{
-							model.setValueAt(JOptionPane.showInputDialog("Enter in First and Last Name"), 
-									getRow(model,studentID.getText()), 1);
+							if(stu.getLocation().equals("Here"))
+							{
+								stu.givePass(e.getActionCommand());
+								String status = stu.process(getTime(), per);
+								if(status.isEmpty()||status.equals("This pass is verified"))
+								{
+									updateRow(cl, model, studentID.getText());
+									cl.saveStudents();
+								}
+								else
+								{
+									JOptionPane.showMessageDialog(this,status);
+								}
+							}
 						}
 						else
 						{
-							model.setValueAt((getTime()), getRow(model,studentID.getText()), 2);
+							stu = new Student(studentID.getText(),JOptionPane.showInputDialog("Enter in First and Last Name"));
+							cl.addStudent(stu);
+							cl.saveStudents();
+							stu.givePass(e.getActionCommand());
+							stu.process(getTime(), per);
+							model.addRow(new Object[] {studentID.getText(), 
+									stu.getName(), 
+									getTime(), stu.getLocation(),stu.getTimeIn()});
 						}
-						model.setValueAt(classID.getText().substring(4,7), getRow(model,studentID.getText()), 3);
-					}
-					else
-					{
-						model.addRow(new Object[] {studentID.getText(), 
-								JOptionPane.showInputDialog("Enter in First and Last Name"), 
-								getTime(), classID.getText().substring(4, 7)});
-					}
-					System.out.println("VERIFIED");
-					studentID.setText(" ");
-					studentID.setText("");
-					classID.setText(" ");
-					classID.setText("");
-					studentID.requestFocus();
-					try
-					{
-						saveStudents();
-					}
-					catch (FileNotFoundException | UnsupportedEncodingException e1)
-					{
-						e1.printStackTrace();
+						studentID.setText(" ");
+						studentID.setText("");
+						classID.setText(" ");
+						classID.setText("");
+						studentID.requestFocus();
 					}
 				}
-				else
-				{
-					JOptionPane.showMessageDialog(this , (verifyPass(classID.getText())));
-					studentID.setText(" ");
-					studentID.setText("");
-					classID.setText(" ");
-					classID.setText("");
-				}*/
 			}
 		}
 	}
