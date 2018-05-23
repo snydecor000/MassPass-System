@@ -275,9 +275,11 @@ public class StudyHallMassPass extends Frame implements ActionListener
 							cl.saveStudents();
 							stu.givePass(e.getActionCommand());
 							stu.process(getTime(), per);
+							//it doesnt actually set stu to have proper values??
 							model.addRow(new Object[] {studentID.getText(), 
 									stu.getName(), 
 									getTime(), stu.getLocation(),stu.getTimeIn()});
+							updateRow(cl,model,studentID.getText());
 						}
 						studentID.setText(" ");
 						studentID.setText("");

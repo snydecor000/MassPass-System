@@ -93,16 +93,87 @@ public class Student
 	
 	public String getLocation()
 	{
+		if(location.matches("^\\d{3}$"))
+		{
+			if(Integer.parseInt(location) >= 900)
+			{
+				switch(Integer.parseInt(location))
+				{
+				case 900:
+					location= "Attendance Office";
+					break;
+				case 901:
+					location= "Guidance Office";
+					break;
+				case 902:
+					location= "Main Office";
+					break;
+				case 903:
+					location= "Deans Office";
+					break;
+				case 904:
+					location= "Athletic Office";
+					break;
+				case 905:
+					location= "Media Center";
+					break;
+				case 906:
+					location= "Music Practice Rooms";
+					break;
+				case 907:
+					location= "West Gym";
+					break;
+				case 908:
+					location= "East Gym";
+					break;
+				case 909:
+					location= "Student Activity Center";
+					break;
+				}
+			}
+		}
 		return location;
 	}
 	
 	public void setLocation(String loc)
 	{
-		location = loc;
-		if(location.matches("^\\d{3}$"))
+		if(loc.matches("^\\d{3}$"))
 		{
-			status = StudentStatus.CheckedOut;
+			switch(Integer.parseInt(loc))
+			{
+			case 900:
+				loc= "Attendance Office";
+				break;
+			case 901:
+				loc= "Guidance Office";
+				break;
+			case 902:
+				loc= "Main Office";
+				break;
+			case 903:
+				loc= "Deans Office";
+				break;
+			case 904:
+				loc= "Athletic Office";
+				break;
+			case 905:
+				loc= "Media Center";
+				break;
+			case 906:
+				loc= "Music Practice Rooms";
+				break;
+			case 907:
+				loc= "West Gym";
+				break;
+			case 908:
+				loc= "East Gym";
+				break;
+			case 909:
+				loc= "Student Activity Center";
+				break;
+			}
 		}
+		location = loc;
 	}
 	
 	public void givePass(String barcode)

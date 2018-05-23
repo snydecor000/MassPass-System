@@ -47,10 +47,6 @@ public class Class
 					String line = in.nextLine();
 					Student s = new Student();
 					String[] splitLine = line.split(",");
-					for(int x = 0;x < splitLine.length;x++)
-					{
-						System.out.println("THIS IS A TEST:" + splitLine[x]);
-					}
 					if(splitLine.length > 0)
 					{
 						s.setIDNumber(splitLine[0]);

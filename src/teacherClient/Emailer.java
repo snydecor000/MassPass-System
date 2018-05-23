@@ -117,6 +117,40 @@ public class Emailer
 			break;
 		}
 		
+		switch(Integer.parseInt(r))
+		{
+		case 900:
+			r = "Attendance Office";
+			break;
+		case 901:
+			r = "Guidance Office";
+			break;
+		case 902:
+			r = "Main Office";
+			break;
+		case 903:
+			r = "Deans Office";
+			break;
+		case 904:
+			r = "Athletic Office";
+			break;
+		case 905:
+			r = "Media Center";
+			break;
+		case 906:
+			r = "Music Practice Rooms";
+			break;
+		case 907:
+			r = "West Gym";
+			break;
+		case 908:
+			r = "East Gym";
+			break;
+		case 909:
+			r = "Student Activity Center";
+			break;
+		}
+		
 		MimeBodyPart text = new MimeBodyPart();
 		text.setText("A Center Grove HS teacher has given you a pass to " + r 
 				+ " during period " + p + " on " + month + ", " + d 
