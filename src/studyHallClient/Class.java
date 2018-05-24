@@ -15,7 +15,7 @@ public class Class
 	private String name;
 	private String period;
 	private File classFile;
-	private Comparator<Student> StuNameComparator = new Comparator<Student>()
+	private Comparator<Student> StudentNameComparator = new Comparator<Student>()
 	{
 		public int compare(Student s1, Student s2)
 		{
@@ -157,7 +157,7 @@ public class Class
 	
 	public void sortStudents()
 	{
-		students.sort(StuNameComparator);
+		students.sort(StudentNameComparator);
 	}
 	
 	public String toString()

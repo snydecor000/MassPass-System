@@ -235,10 +235,10 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		{
 			String per = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
 			Class cl = classes.getClass(per);
-			Student stu = cl.getStudent(e.getActionCommand());
+			Student stu = cl.getStudent(studentID.getText());
 			DefaultTableModel model = (DefaultTableModel) tables.get(Integer.parseInt(per)-1).getModel();
 			
-			if(e.getActionCommand().matches("^\\d{8}$"))
+			if(studentID.getText().matches("^\\d{8}$"))
 			{
 				if(stu != null)
 				{
@@ -256,9 +256,9 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		}
 		if(e.getSource().equals(classID))
 		{
-			if(e.getActionCommand().length()>=10)
+			if(classID.getText().length()>=10)
 			{
-				if(e.getActionCommand().matches("^\\d{10,11}$") && studentID.getText().matches("^\\d{8}$"))
+				if(classID.getText().matches("^\\d{10,11}$") && studentID.getText().matches("^\\d{8}$"))
 				{
 					String per = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
 					Class cl = classes.getClass(per);
@@ -272,7 +272,7 @@ public class StudyHallMassPass extends Frame implements ActionListener
 						{
 							if(stu.getLocation().equals("Here"))
 							{
-								stu.givePass(e.getActionCommand());
+								stu.givePass(classID.getText());
 								String status = stu.process(getTime(), per);
 								if(status.isEmpty()||status.equals("This pass is verified"))
 								{
@@ -289,13 +289,13 @@ public class StudyHallMassPass extends Frame implements ActionListener
 						{
 							stu = new Student(studentID.getText(),JOptionPane.showInputDialog("Enter in First and Last Name"));
 							cl.addStudent(stu);
-							stu.givePass(e.getActionCommand());
+							stu.givePass(classID.getText());
 							stu.process(getTime(), per);
 							cl.saveStudents();
 							//it doesnt actually set stu to have proper values??
 							model.addRow(new Object[] {studentID.getText(), 
-									stu.getName(), 
-									getTime(), stu.getLocation(),stu.getTimeIn()});
+									stu.getName(), getTime(), stu.getLocation(),
+									stu.getTimeIn()});
 							updateRow(cl,model,studentID.getText());
 						}
 						studentID.setText(" ");

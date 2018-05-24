@@ -261,7 +261,7 @@ public class TeacherMassPass extends Frame implements ActionListener
 		if(e.getSource().equals(b))
 		{
 			if(!(emailUsername.getText().isEmpty()) && 
-					!(period.getText().isEmpty()) && 
+					(period.getText().matches("^\\d{1,2}$")) && 
 					!(classroom.getText().isEmpty()))
 			{
 				recipient = emailUsername.getText() + "@students.centergrove.k12.in.us";
@@ -269,7 +269,7 @@ public class TeacherMassPass extends Frame implements ActionListener
 				try
 				{
 					email.sendBarcodeEmail((date.getDate().getMonth()+1), date.getDate().getDate(), 
-							Integer.parseInt(period.getText()), classroom.getText());
+							(Integer.parseInt(period.getText())-1), classroom.getText());
 				}
 				catch (NumberFormatException | IOException | MessagingException | NoSuchAlgorithmException e1)
 				{

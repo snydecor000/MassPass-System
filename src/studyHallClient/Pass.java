@@ -132,7 +132,7 @@ public class Pass
 			month = b.substring(0, 2);
 			day = b.substring(2, 4);
 			location = b.substring(4, 7);
-			period = b.substring(7, 8);
+			period = Integer.toString(Integer.parseInt(b.substring(7, 8))+1);
 			encryption = b.substring(8);
 			return true;
 		}
