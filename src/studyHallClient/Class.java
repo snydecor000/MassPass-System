@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class Class 
@@ -13,6 +15,15 @@ public class Class
 	private String name;
 	private String period;
 	private File classFile;
+	private Comparator<Student> StuNameComparator = new Comparator<Student>()
+	{
+		public int compare(Student s1, Student s2)
+		{
+		   String StudentName1 = s1.getName().toUpperCase();
+		   String StudentName2 = s2.getName().toUpperCase();
+		   return StudentName1.compareTo(StudentName2);
+	    }
+	};
 	
 	public Class()
 	{
@@ -132,6 +143,21 @@ public class Class
 	public String getFullName()
 	{
 		return (name + "_" + period);
+	}
+	
+	public void resetStudentInfo()
+	{
+		for(Student s : students)
+		{
+			s.setLocation("Here");
+			s.setTimeIn("");
+			s.setTimeOut("");
+		}
+	}
+	
+	public void sortStudents()
+	{
+		students.sort(StuNameComparator);
 	}
 	
 	public String toString()

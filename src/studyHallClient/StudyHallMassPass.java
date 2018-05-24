@@ -33,6 +33,7 @@ import java.util.Scanner;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -50,13 +51,14 @@ import javax.swing.table.DefaultTableModel;
 
 public class StudyHallMassPass extends Frame implements ActionListener
 {
-	private JFrame frame;
 	private JLabel l;
 	private JTextField studentID;
 	private JLabel l2;
 	private JTextField classID;
 	private JLabel l3;
 	private JComboBox<String> periods;
+	private JButton resetStudents;
+	private JButton addClass;
 	JTabbedPane tabbedPane;
 	Classes classes;
 	ArrayList<JTable> tables;
@@ -130,12 +132,16 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		for(Class c : classes.getClasses())
 		{
 			JPanel j = new JPanel();
+			j.setLayout(new BoxLayout(j, BoxLayout.Y_AXIS));
+			l3 = new JLabel(c.getName());
+			j.add(l3);
 			j.add(new JScrollPane(tables.get(Integer.parseInt(c.getPeriod())-1)));
 			tabbedPane.add(c.getPeriod(),j);
 		}
 		
 		for(Class c : classes.getClasses())
 		{
+			c.sortStudents();
 			DefaultTableModel model = (DefaultTableModel)tables.get(Integer.parseInt(c.getPeriod())-1).getModel();
 			for(Student s : c.getStudents())
 			{
@@ -155,6 +161,9 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		
 		JPanel textFields = new JPanel();
 		textFields.setLayout(new BorderLayout());
+		
+		JPanel options = new JPanel();
+		options.setLayout(new BoxLayout(options, BoxLayout.Y_AXIS));
 	
 		GridBagConstraints c;
 		JPanel top = new JPanel();
@@ -191,8 +200,15 @@ public class StudyHallMassPass extends Frame implements ActionListener
 
 		inputs.add(textFields);
 		
-		JPanel options = new JPanel();
-		//inputs.add(options);
+		resetStudents = new JButton("Reset Student Information");
+		resetStudents.addActionListener(this);
+		options.add(resetStudents);
+		
+		addClass = new JButton("Add New Class");
+		addClass.addActionListener(this);
+		options.add(addClass);
+		
+		inputs.add(options);
 
 		panel.add(tabbedPane);
 		
@@ -230,11 +246,12 @@ public class StudyHallMassPass extends Frame implements ActionListener
 					stu.process(getTime(), per);
 					updateRow(cl, model,stu.getIDNumber());
 					cl.saveStudents();
+					studentID.setText(" ");
+					studentID.setText("");
+					classID.setText(" ");
+					classID.setText("");
+					studentID.requestFocus();
 				}
-				studentID.setText(" ");
-				studentID.setText("");
-				classID.setText(" ");
-				classID.setText("");
 			}
 		}
 		if(e.getSource().equals(classID))
@@ -272,9 +289,9 @@ public class StudyHallMassPass extends Frame implements ActionListener
 						{
 							stu = new Student(studentID.getText(),JOptionPane.showInputDialog("Enter in First and Last Name"));
 							cl.addStudent(stu);
-							cl.saveStudents();
 							stu.givePass(e.getActionCommand());
 							stu.process(getTime(), per);
+							cl.saveStudents();
 							//it doesnt actually set stu to have proper values??
 							model.addRow(new Object[] {studentID.getText(), 
 									stu.getName(), 
@@ -288,6 +305,56 @@ public class StudyHallMassPass extends Frame implements ActionListener
 						studentID.requestFocus();
 					}
 				}
+			}
+		}
+		if(e.getSource().equals(resetStudents))
+		{
+			String per = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+			Class cl = classes.getClass(per);
+			DefaultTableModel model = (DefaultTableModel) tables.get(Integer.parseInt(per)-1).getModel();
+			cl.resetStudentInfo();
+			
+			for(Student s : cl.getStudents())
+			{
+				updateRow(cl, model, s.getIDNumber());
+			}
+			cl.saveStudents();
+		}
+		if(e.getSource().equals(addClass))
+		{
+			String className = JOptionPane.showInputDialog("Enter in Class Name");
+			Object[] options = new Object[]{"1","2","3","4","5","6","7","8","9","10"};
+			int classPeriod = JOptionPane.showOptionDialog(this, "Select a Period", "", 
+					JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null)+1;
+			boolean ok = true;
+			for(Class c : classes.getClasses())
+			{
+				if(c.getPeriod().equals(Integer.toString(classPeriod)))
+				{
+					ok = false;
+				}
+			}
+			if(ok)
+			{
+				classes.addClass(className, Integer.toString(classPeriod));
+				Class c = classes.getClass(Integer.toString(classPeriod));
+				
+				JPanel j = new JPanel();
+				j.setLayout(new BoxLayout(j, BoxLayout.Y_AXIS));
+				l3 = new JLabel(c.getName());
+				j.add(l3);
+				j.add(new JScrollPane(tables.get(Integer.parseInt(c.getPeriod())-1)));
+				tabbedPane.add(c.getPeriod(),j);
+				
+				DefaultTableModel model = (DefaultTableModel)tables.get(Integer.parseInt(c.getPeriod())-1).getModel();
+				for(Student s : c.getStudents())
+				{
+					model.addRow(new Object[] {s.getIDNumber(),s.getName(),s.getTimeOut(),s.getLocation(),s.getTimeIn()});
+				}
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(this, "This Period Already Exists");
 			}
 		}
 	}
