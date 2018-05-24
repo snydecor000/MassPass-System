@@ -322,7 +322,7 @@ public class StudyHallMassPass extends Frame implements ActionListener
 		}
 		if(e.getSource().equals(addClass))
 		{
-			String className = JOptionPane.showInputDialog("Enter in Class Name");
+			String className = JOptionPane.showInputDialog("Enter in Class Name\n(Can't have spaces)");
 			Object[] options = new Object[]{"1","2","3","4","5","6","7","8","9","10"};
 			int classPeriod = JOptionPane.showOptionDialog(this, "Select a Period", "", 
 					JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null)+1;
@@ -336,25 +336,32 @@ public class StudyHallMassPass extends Frame implements ActionListener
 			}
 			if(ok)
 			{
-				classes.addClass(className, Integer.toString(classPeriod));
-				Class c = classes.getClass(Integer.toString(classPeriod));
-				
-				JPanel j = new JPanel();
-				j.setLayout(new BoxLayout(j, BoxLayout.Y_AXIS));
-				l3 = new JLabel(c.getName());
-				j.add(l3);
-				j.add(new JScrollPane(tables.get(Integer.parseInt(c.getPeriod())-1)));
-				tabbedPane.add(c.getPeriod(),j);
-				
-				DefaultTableModel model = (DefaultTableModel)tables.get(Integer.parseInt(c.getPeriod())-1).getModel();
-				for(Student s : c.getStudents())
+				if(className.matches("^\\S+$"))
 				{
-					model.addRow(new Object[] {s.getIDNumber(),s.getName(),s.getTimeOut(),s.getLocation(),s.getTimeIn()});
+					classes.addClass(className, Integer.toString(classPeriod));
+					Class c = classes.getClass(Integer.toString(classPeriod));
+					
+					JPanel j = new JPanel();
+					j.setLayout(new BoxLayout(j, BoxLayout.Y_AXIS));
+					l3 = new JLabel(c.getName());
+					j.add(l3);
+					j.add(new JScrollPane(tables.get(Integer.parseInt(c.getPeriod())-1)));
+					tabbedPane.add(c.getPeriod(),j);
+					
+					DefaultTableModel model = (DefaultTableModel)tables.get(Integer.parseInt(c.getPeriod())-1).getModel();
+					for(Student s : c.getStudents())
+					{
+						model.addRow(new Object[] {s.getIDNumber(),s.getName(),s.getTimeOut(),s.getLocation(),s.getTimeIn()});
+					}
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(this, "The name can't have spaces");
 				}
 			}
 			else
 			{
-				JOptionPane.showMessageDialog(this, "This Period Already Exists");
+				JOptionPane.showMessageDialog(this, "This period already exists");
 			}
 		}
 	}
