@@ -153,7 +153,7 @@ public class Emailer
 		
 		MimeBodyPart text = new MimeBodyPart();
 		text.setText("A Center Grove HS teacher has given you a pass to " + r 
-				+ " during period " + p + " on " + month + ", " + d 
+				+ " during period " + Integer.toString(p+1) + " on " + month + ", " + d 
 				+ "\nMake sure your screen is full brightness before scanning");
 		return text;
 	}

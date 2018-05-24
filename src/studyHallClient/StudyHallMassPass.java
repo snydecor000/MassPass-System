@@ -246,11 +246,22 @@ public class StudyHallMassPass extends Frame implements ActionListener
 					stu.process(getTime(), per);
 					updateRow(cl, model,stu.getIDNumber());
 					cl.saveStudents();
-					studentID.setText(" ");
-					studentID.setText("");
-					classID.setText(" ");
-					classID.setText("");
-					studentID.requestFocus();
+					if(!stu.getLocation().equals("Here"))
+					{
+						studentID.setText(" ");
+						studentID.setText("");
+						classID.setText(" ");
+						classID.setText("");
+						studentID.requestFocus();
+					}
+					else
+					{
+						classID.requestFocus();
+					}
+				}
+				else
+				{
+					classID.requestFocus();
 				}
 			}
 		}
